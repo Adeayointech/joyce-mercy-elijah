@@ -464,34 +464,6 @@ app.delete('/assignments/:id', authMiddleware, async (req, res) => {
   }catch(err){ console.error(err); return res.status(500).json({ error: 'server error' }); }
 });
 
-// TEMPORARY: Create assessor endpoint (REMOVE AFTER USE!)
-app.post('/admin/create-assessor-temp', async (req, res) => {
-  try {
-    const { secret, name, email, password } = req.body;
-    
-    // Simple security - use your JWT_SECRET
-    if (secret !== JWT_SECRET) {
-      return res.status(403).json({ error: 'Invalid secret' });
-    }
-    
-    const hash = await bcrypt.hash(password, 10);
-    const now = new Date().toISOString();
-    
-    await run(
-      `INSERT INTO users (name, email, password_hash, role, approved, active, created_at) VALUES (?,?,?,?,1,1,?)`,
-      [name, email, hash, 'assessor', now]
-    );
-    
-    return res.json({ success: true, message: 'Assessor created!' });
-  } catch(err) {
-    if(err && err.message && err.message.includes('UNIQUE')) {
-      return res.status(400).json({ error: 'Email already exists' });
-    }
-    console.error(err);
-    return res.status(500).json({ error: err.message });
-  }
-});
-
 app.get('/', (req, res) => res.json({ ok: true, message: 'Portfolio app API' }));
 
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
