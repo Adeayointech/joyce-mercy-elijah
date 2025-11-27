@@ -1,4 +1,5 @@
 module.exports = {
-  output: 'standalone',
   reactStrictMode: true,
+  // Use standalone for deployment
+  output: 'standalone',
 }
